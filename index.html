@@ -81,17 +81,6 @@
                       </a>
                     </span>
 
-                  <!--   <!-- Supplementary PDF link --> -->
-                  <!--   <span class="link-block"> -->
-                  <!--     <a href="static/pdfs/supplementary_material.pdf" target="_blank" -->
-                  <!--     class="external-link button is-normal is-rounded is-dark"> -->
-                  <!--     <span class="icon"> -->
-                  <!--       <i class="fas fa-file-pdf"></i> -->
-                  <!--     </span> -->
-                  <!--     <span>Supplementary</span> -->
-                  <!--   </a> -->
-                  <!-- </span> -->
-
                   <!-- Github link -->
                   <span class="link-block">
                     <a href="https://github.com/cogsys-tuebingen/tt3d" target="_blank"
@@ -121,7 +110,7 @@
                        <i class="far fa-images"></i>
                    </span>
                    <span>Evaluation dataset</span>
-                   </a> <!-- <- this closing </a> tag was missing -->
+                   </a> 
                    </span>
             </div>
           </div>
@@ -131,11 +120,28 @@
   </div>
 </section>
 
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+          Sports analysis requires processing large amounts of data, which is time-consuming and costly. Advancements in neural networks have significantly alleviated this burden, enabling highly accurate ball tracking in sports broadcasts. However, relying solely on 2D ball tracking is limiting, as it depends on the camera's viewpoint and falls short of supporting comprehensive game analysis. To address this limitation, we propose a novel approach for reconstructing precise 3D ball trajectories from online table tennis match recordings. Our method leverages the underlying physics of the ball's motion to identify the bounce state that minimizes the reprojection error of the ball's flying trajectory, hence ensuring an accurate and reliable 3D reconstruction. A key advantage of our approach is its ability to infer ball spin without relying on human pose estimation or racket tracking, which are often unreliable or unavailable in broadcast footage. We developed an automated camera calibration method capable of reliably tracking camera movements. Additionally, we adapted an existing 3D pose estimation model, which lacks depth motion capture, to accurately track player movements. Together, these contributions enable the full 3D reconstruction of a table tennis rally.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
 
 <!-- Teaser video-->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
+    <h2 class="title is-3">Camera Calibration</h2>
       <video poster="" id="tree" autoplay controls muted loop height="100%">
         <!-- Your video here -->
         <source src="static/videos/table_calibration.mp4"
@@ -180,22 +186,6 @@
 </section>
 <!-- End video carousel -->
 
-<!-- Paper abstract -->
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-          Sports analysis requires processing large amounts of data, which is time-consuming and costly. Advancements in neural networks have significantly alleviated this burden, enabling highly accurate ball tracking in sports broadcasts. However, relying solely on 2D ball tracking is limiting, as it depends on the camera's viewpoint and falls short of supporting comprehensive game analysis. To address this limitation, we propose a novel approach for reconstructing precise 3D ball trajectories from online table tennis match recordings. Our method leverages the underlying physics of the ball's motion to identify the bounce state that minimizes the reprojection error of the ball's flying trajectory, hence ensuring an accurate and reliable 3D reconstruction. A key advantage of our approach is its ability to infer ball spin without relying on human pose estimation or racket tracking, which are often unreliable or unavailable in broadcast footage. We developed an automated camera calibration method capable of reliably tracking camera movements. Additionally, we adapted an existing 3D pose estimation model, which lacks depth motion capture, to accurately track player movements. Together, these contributions enable the full 3D reconstruction of a table tennis rally.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End paper abstract -->
 
 
 <!-- Image carousel -->
@@ -238,8 +228,6 @@
 <!-- End image carousel -->
 
 
-
-
 <!-- Youtube video -->
 <!-- <section class="hero is-small is-light"> -->
 <!--   <div class="hero-body"> -->
@@ -250,7 +238,7 @@
 <!--         <div class="column is-four-fifths"> -->
 <!--            -->
 <!--           <div class="publication-video"> -->
-<!--             <!-- Youtube embed code here --> -->
+<!--             <!-- Youtube embed code here --> 
 <!--             <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> -->
 <!--           </div> -->
 <!--         </div> -->

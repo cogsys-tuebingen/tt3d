@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
+  <meta name="description" content="3D reconstruction of table tennis games from monocular online video">
   <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
   <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
+  <!-- <meta property="og:image" content="static/image/your_banner_image.png" /> -->
+  <!-- <meta property="og:image:width" content="1200"/> -->
+  <!-- <meta property="og:image:height" content="630"/> -->
 
 
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG"> -->
+  <!-- <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG"> -->
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
-  <meta name="twitter:card" content="summary_large_image">
+  <!-- <meta name="twitter:image" content="static/images/your_twitter_banner_image.png"> -->
+  <!-- <meta name="twitter:card" content="summary_large_image"> -->
   <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="keywords" content="table tennis, 3d reconstruction, ball trajectory ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Academic Project Page</title>
+  <title>TT3D: Table Tennis 3D Reconstruction</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -52,28 +52,27 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Academic Project Page</h1>
+            <h1 class="title is-1 publication-title">TT3D: Table Tennis 3D Reconstruction</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
-                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">First Author</a><sup>*</sup>,</span>
+                <a href="https://scholar.google.com/citations?user=cBo1NCwAAAAJ&hl=en" target="_blank">Thomas Gossard</a>,</span>
                 <span class="author-block">
-                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+                  <a href="https://andreasaziegler.github.io/" target="_blank">Andreas Ziegler</a>,</span>
                   <span class="author-block">
-                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
+                    Andreas Zell
                   </span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block">Institution Name<br>Conferance name and year</span>
-                    <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+                    <span class="author-block">Cognitive Systems, University of Tuebingen<br>CVsports 2025</span>
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                        <a href="https://arxiv.org/pdf/2504.10035" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -95,7 +94,7 @@
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/YOUR REPO HERE" target="_blank"
+                    <a href="https://github.com/cogsys-tuebingen/tt3d" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -106,7 +105,7 @@
 
                 <!-- ArXiv abstract Link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  <a href="https://arxiv.org/abs/2504.10035" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -114,6 +113,14 @@
                   <span>arXiv</span>
                 </a>
               </span>
+              <!-- Dataset Link. -->
+               <span class="link-block">
+                 <a href="https://cloud.cs.uni-tuebingen.de/index.php/s/SCKq85JZEmKoC6J"
+                    class="external-link button is-normal is-rounded is-dark">
+                   <span class="icon">
+                       <i class="far fa-images"></i>
+                   </span>
+                   <span>Evaluation dataset</span>
             </div>
           </div>
         </div>
@@ -129,16 +136,49 @@
     <div class="hero-body">
       <video poster="" id="tree" autoplay controls muted loop height="100%">
         <!-- Your video here -->
-        <source src="static/videos/banner_video.mp4"
+        <source src="static/videos/table_calibration.mp4"
         type="video/mp4">
       </video>
       <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
+          We use the table tennis table to calibrate the camera. We first segment the table surface from which we extract the edges. The intersection of the edges (aka the table corners) are then used to find the camera's pose and focal length by leveraging PnP and optimizing the focal length for the reprojection errror.
       </h2>
     </div>
   </div>
 </section>
 <!-- End teaser video -->
+
+<!-- Video carousel -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3">Rallye 3D Reconstruction</h2>
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-video1">
+          <video poster="" id="video1" autoplay controls muted loop height="100%">
+            <!-- Your video file here -->
+            <source src="static/videos/rally1.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-video2">
+          <video poster="" id="video2" autoplay controls muted loop height="100%">
+            <!-- Your video file here -->
+            <source src="static/videos/rally2.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-video3">
+          <video poster="" id="video3" autoplay controls muted loop height="100%">\
+            <!-- Your video file here -->
+            <source src="static/videos/rally3.mp4"
+            type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End video carousel -->
 
 <!-- Paper abstract -->
 <section class="section hero is-light">
@@ -148,7 +188,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna feugiat nibh elementum, et tempor dolor mattis. Donec accumsan enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex eget mauris cursus euismod nec et nibh. Maecenas ac gravida ante, nec cursus dui. Vivamus purus nibh, placerat ac purus eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus gravida commodo. Pellentesque auctor leo vitae sagittis suscipit.
+          Sports analysis requires processing large amounts of data, which is time-consuming and costly. Advancements in neural networks have significantly alleviated this burden, enabling highly accurate ball tracking in sports broadcasts. However, relying solely on 2D ball tracking is limiting, as it depends on the camera's viewpoint and falls short of supporting comprehensive game analysis. To address this limitation, we propose a novel approach for reconstructing precise 3D ball trajectories from online table tennis match recordings. Our method leverages the underlying physics of the ball's motion to identify the bounce state that minimizes the reprojection error of the ball's flying trajectory, hence ensuring an accurate and reliable 3D reconstruction. A key advantage of our approach is its ability to infer ball spin without relying on human pose estimation or racket tracking, which are often unreliable or unavailable in broadcast footage. We developed an automated camera calibration method capable of reliably tracking camera movements. Additionally, we adapted an existing 3D pose estimation model, which lacks depth motion capture, to accurately track player movements. Together, these contributions enable the full 3D reconstruction of a table tennis rally.
           </p>
         </div>
       </div>
@@ -159,100 +199,68 @@
 
 
 <!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          First image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-          Second image description.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
-        <h2 class="subtitle has-text-centered">
-         Third image description.
-       </h2>
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
-      <h2 class="subtitle has-text-centered">
-        Fourth image description.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
-</section>
+<!-- <section class="hero is-small"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
+<!--       <div id="results-carousel" class="carousel results-carousel"> -->
+<!--        <div class="item"> -->
+<!--         <!-- Your image here --> -->
+<!--         <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/> -->
+<!--         <h2 class="subtitle has-text-centered"> -->
+<!--           First image description. -->
+<!--         </h2> -->
+<!--       </div> -->
+<!--       <div class="item"> -->
+<!--         <!-- Your image here --> -->
+<!--         <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/> -->
+<!--         <h2 class="subtitle has-text-centered"> -->
+<!--           Second image description. -->
+<!--         </h2> -->
+<!--       </div> -->
+<!--       <div class="item"> -->
+<!--         <!-- Your image here --> -->
+<!--         <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/> -->
+<!--         <h2 class="subtitle has-text-centered"> -->
+<!--          Third image description. -->
+<!--        </h2> -->
+<!--      </div> -->
+<!--      <div class="item"> -->
+<!--       <!-- Your image here --> -->
+<!--       <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/> -->
+<!--       <h2 class="subtitle has-text-centered"> -->
+<!--         Fourth image description. -->
+<!--       </h2> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </div> -->
+<!-- </div> -->
+<!-- </section> -->
 <!-- End image carousel -->
 
 
 
 
 <!-- Youtube video -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <!-- Paper video. -->
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
-            <!-- Youtube embed code here -->
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- <section class="hero is-small is-light"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
+<!--       <!-- Paper video. --> -->
+<!--       <h2 class="title is-3">Video Presentation</h2> -->
+<!--       <div class="columns is-centered has-text-centered"> -->
+<!--         <div class="column is-four-fifths"> -->
+<!--            -->
+<!--           <div class="publication-video"> -->
+<!--             <!-- Youtube embed code here --> -->
+<!--             <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </section> -->
 <!-- End youtube video -->
 
 
-<!-- Video carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
-            <!-- Your video file here -->
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            <!-- Your video file here -->
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End video carousel -->
 
 
 
@@ -260,17 +268,17 @@
 
 
 <!-- Paper poster -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
+<!-- <section class="hero is-small is-light"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
+<!--       <h2 class="title">Poster</h2> -->
 
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
-      </div>
-    </div>
-  </section>
+<!--       <iframe  src="static/pdfs/sample.pdf" width="100%" height="550"> -->
+<!--           </iframe> -->
+<!--          -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </section> -->
 <!--End paper poster -->
 
 
@@ -278,7 +286,12 @@
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>BibTex Code Here</code></pre>
+      <pre><code>@InProceedings{gossard2025,
+          author    = {Gossard, Thomas and Ziegler, Andreas and Zell, Andreas},
+          title     = {TT3D: Table Tennis 3D Reconstruction},
+          booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+          month     = {June}
+          year      = {2025},</code></pre>
     </div>
 </section>
 <!--End BibTex citation -->

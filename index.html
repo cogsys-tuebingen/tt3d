@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="3D reconstruction of table tennis games from monocular online video">
+  <meta name="description" content="Accurate 3D reconstruction of table tennis games from monocular online video">
   <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
   <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
   <meta property="og:url" content="URL OF THE WEBSITE"/>
@@ -14,8 +14,8 @@
   <!-- <meta property="og:image:height" content="630"/> -->
 
 
-  <!-- <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG"> -->
-  <!-- <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG"> -->
+  <meta name="twitter:title" content="TT3D: Table Tennis 3D Reconstruction">
+  <meta name="twitter:description" content="Accurate 3D reconstruction of table tennis games from monocular online video">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
   <!-- <meta name="twitter:image" content="static/images/your_twitter_banner_image.png"> -->
   <!-- <meta name="twitter:card" content="summary_large_image"> -->
@@ -81,16 +81,16 @@
                       </a>
                     </span>
 
-                    <!-- Supplementary PDF link -->
-                    <span class="link-block">
-                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
-                      class="external-link button is-normal is-rounded is-dark">
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Supplementary</span>
-                    </a>
-                  </span>
+                  <!--   <!-- Supplementary PDF link --> -->
+                  <!--   <span class="link-block"> -->
+                  <!--     <a href="static/pdfs/supplementary_material.pdf" target="_blank" -->
+                  <!--     class="external-link button is-normal is-rounded is-dark"> -->
+                  <!--     <span class="icon"> -->
+                  <!--       <i class="fas fa-file-pdf"></i> -->
+                  <!--     </span> -->
+                  <!--     <span>Supplementary</span> -->
+                  <!--   </a> -->
+                  <!-- </span> -->
 
                   <!-- Github link -->
                   <span class="link-block">
@@ -121,6 +121,8 @@
                        <i class="far fa-images"></i>
                    </span>
                    <span>Evaluation dataset</span>
+                   </a> <!-- <- this closing </a> tag was missing -->
+                   </span>
             </div>
           </div>
         </div>
@@ -168,10 +170,8 @@
           </video>
         </div>
         <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
-            <!-- Your video file here -->
-            <source src="static/videos/rally3.mp4"
-            type="video/mp4">
+          <video poster="" id="video3" autoplay controls muted loop height="100%">
+            <source src="static/videos/rally3.mp4" type="video/mp4">
           </video>
         </div>
       </div>
@@ -290,7 +290,7 @@
           author    = {Gossard, Thomas and Ziegler, Andreas and Zell, Andreas},
           title     = {TT3D: Table Tennis 3D Reconstruction},
           booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
-          month     = {June}
+          month     = {June},
           year      = {2025},</code></pre>
     </div>
 </section>

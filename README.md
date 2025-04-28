@@ -77,4 +77,15 @@ python tt3d/rally/rally.py root_dir
 python tt3d/pose/render.py
 ```
 
+## Citing
+If you find this work useful, please consider citing:
+```bibtex
+@InProceedings{gossard2025,
+          author    = {Gossard, Thomas and Ziegler, Andreas and Zell, Andreas},
+          title     = {TT3D: Table Tennis 3D Reconstruction},
+          booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+          month     = {June},
+          year      = {2025}
+          }
+```
 

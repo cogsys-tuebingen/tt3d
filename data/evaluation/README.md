@@ -5,3 +5,6 @@ We recorded with a multi-camera setup the 3D ball trajectory of 2 amateur table 
 The frame used here is X along side width of the table, Y along the length of  the table and Z upwards. The origin of the frame is set at the center of the table's surface.
 
 Each cvs file contains the timestamp in s, the ground truth 3D position in meters and the the camera coordinates of the ball (u, v). We additionnaly simulated the blur information for the ball with (l, theta).
+
+
+The corresponding raw videos are available [here](https://cloud.cs.uni-tuebingen.de/index.php/s/SCKq85JZEmKoC6J).

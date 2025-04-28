@@ -1,5 +1,12 @@
 # TT3D: Table tennis match 3D reconstruction
 
+This is the code for TT3D, a table tennis 3D reconstruction method that works with monocular videos. It performs the camera calibration and ball trajectory 3D reconstruction. 
+
+- [Project Page](https://cogsys-tuebingen.github.io/tt3d/)
+- [Paper](https://arxiv.org/pdf/2504.10035)
+
+![Render](./render_landscape.png)
+
 ##  Setup
 
 ## Camera Calibration

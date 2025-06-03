@@ -45,6 +45,7 @@ class TableCalibrator:
                 [0, -1.37, 0],
             ]
         )
+        print("Using: ", segmentation_model_path)
         self.init_segmenter(segmentation_model_path)
         # self.qb = QuadrilateralBounder()
         if h is not None:
@@ -225,6 +226,10 @@ class TableCalibrator:
         rvec, tvec, f, er = self.process_corners(corners)
         if er > self.er_thres:
             return None, None, None, er, debug_img
+        # Sanity check for the table position
+        if tvec[2] > 20 or tvec[2] < 1:
+            return None, None, None, er, debug_img
+
         self.update_K(f)
         rvec = self.correct_rvec(rvec)
 

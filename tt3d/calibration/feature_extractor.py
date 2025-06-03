@@ -23,7 +23,7 @@ class FeatureExtractor:
         self.w = w
         self.hough_thresh = 40
         # self.hough_thresh = 50
-        self.hough_thresh_step = 3
+        self.hough_thresh_step = 5
         self.table_3dpoints = np.array(
             [
                 [-0.7625, 1.37, 0],
@@ -34,7 +34,7 @@ class FeatureExtractor:
         )
         self.mid_line = np.array([[0, 1.37, 0], [0, -1.37, 0]])
         self.all_table_3dpoints = np.vstack((self.table_3dpoints, self.mid_line))
-        self.bundler = HoughBundler(min_distance=10, min_angle=7)
+        self.bundler = HoughBundler(min_distance=3, min_angle=8)
 
     def filter_lines(self, lines, mask):
         h, w = mask.shape
@@ -163,15 +163,34 @@ class FeatureExtractor:
                 return False
         return True
 
-    def filter_contours(self, contours, area_ratio_thresh=5e-3):
+    def filter_contours(self, contours, area_ratio_thresh=1e-3):
         """
         Selects only the contours with a large area and only the 2 biggest
         :param contours [TODO:type]: [TODO:description]
         """
+        ratio = 0.2
+        center_x_min = self.w * ratio
+        center_x_max = self.w * (1 - ratio)
+        center_y_min = self.h * ratio
+        center_y_max = self.h * (1 - ratio)
+
+        # Filter contours by their area
         area_threshold = area_ratio_thresh * self.w * self.h
-        filtered_contours = [
-            contour for contour in contours if cv2.contourArea(contour) > area_threshold
-        ]
+
+        filtered_contours = []
+        for contour in contours:
+            if cv2.contourArea(contour) > area_threshold:
+                M = cv2.moments(contour)
+                if M["m00"] == 0:
+                    continue  # skip degenerate contours
+                cx = M["m10"] / M["m00"]
+                cy = M["m01"] / M["m00"]
+
+                if (
+                    center_x_min <= cx <= center_x_max
+                    and center_y_min <= cy <= center_y_max
+                ):
+                    filtered_contours.append(contour)
         # print(filtered_contours)
         # Sort the contours by area in ascending order
         sorted_contours = sorted(filtered_contours, key=cv2.contourArea)
@@ -180,7 +199,7 @@ class FeatureExtractor:
             if self.is_contour_inside(sorted_contours[-2], sorted_contours[-1]):
                 return sorted_contours[-1:]
 
-        return sorted_contours[-2:]
+        return sorted_contours[-3:]
 
     def shrink_contour(self, contour, offset):
         """
@@ -228,42 +247,62 @@ class FeatureExtractor:
         Returns:
             np.ndarray: Array of lines with shape (N, 4), where each line is [x1, y1, x2, y1].
         """
-        # Initialize the edge image
-        edge_img = np.zeros((self.h, self.w), dtype="uint8")
 
-        # Draw contours on the edge image
-        edge_img = (
-            self.draw_contours(edge_img, contours, mask=mask)
-            if mask is not None
-            else self.draw_contours(edge_img, contours)
-        )
+        # Create masks
+        contour_mask = np.zeros((self.h, self.w), dtype=np.uint8)
+        hull_mask = np.zeros((self.h, self.w), dtype=np.uint8)
 
-        # Initialize Hough parameters
-        hough_thresh = int(0.2 * np.sqrt(cv2.contourArea(contours[0])))
-        # print(cv2.contourArea(contours[0]))
+        # Draw all contours (as edges)
+        cv2.drawContours(contour_mask, contours, -1, 255, thickness=1)
+
+        # Compute and draw convex hull of all points
+        all_points = np.vstack(contours)
+        hull = cv2.convexHull(all_points)
+        cv2.drawContours(hull_mask, [hull], -1, 255, thickness=cv2.FILLED)
+
+        # Shrink the convex hull slightly
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))  # Tunable
+        shrunken_hull = cv2.erode(hull_mask, kernel)
+
+        # Get contour edges outside the shrunken convex hull
+        outside_edges = cv2.bitwise_and(contour_mask, cv2.bitwise_not(shrunken_hull))
+        # cv2.imshow("edges", outside_edges)
+        # cv2.waitKey(1)
+
+        # Estimate an initial Hough threshold based on contour area
+        initial_thresh = int(0.4 * np.sqrt(cv2.contourArea(contours[0])))
+        min_line_length = int(self.h * 0.010)
+        max_line_gap = int(self.h * 0.25)
+
+        # Initialize variables
+        threshold = initial_thresh
         lines = []
         attempts = 0
+        max_attempts = 10
 
-        # Perform iterative Hough Line Transform to detect edges
-        while len(lines) < 10 and attempts < 10:
-            detected_lines = cv2.HoughLinesP(
-                edge_img,
+        while len(lines) < 6 and attempts < max_attempts:
+            detected = cv2.HoughLinesP(
+                outside_edges,
                 rho=1,
-                theta=1 * np.pi / 180,
-                threshold=hough_thresh,
-                minLineLength=int(self.h * 0.015),
-                maxLineGap=int(self.h * 0.25),
+                theta=np.pi / 180,
+                threshold=threshold,
+                minLineLength=min_line_length,
+                maxLineGap=max_line_gap,
             )
 
-            if detected_lines is not None:
-                lines = np.array(detected_lines).squeeze()
+            if detected is not None and len(detected) > 0:
+                lines = np.squeeze(detected)
+                if lines.ndim == 1:
+                    lines = lines[np.newaxis, :]  # ensure 2D shape
             else:
                 lines = []
 
-            hough_thresh -= self.hough_thresh_step
+            threshold = max(
+                1, threshold - self.hough_thresh_step
+            )  # avoid zero threshold
             attempts += 1
 
-        # If no lines detected, return empty array
+        # Return as clean numpy array
         if len(lines) == 0:
             return np.empty((0, 4), dtype=int)
 
@@ -275,60 +314,33 @@ class FeatureExtractor:
         return cleaned_mask
 
     def extend_lines(self, lines):
-        # print(lines)
         extended_lines = []
+        img_rect = (0, 0, self.w, self.h)  # x, y, width, height
+
         for line in lines:
             x1, y1, x2, y2 = line
 
-            if x1 == x2:  # Vertical line
-                extended_lines.append([x1, 0, x2, self.h])
-                continue
-            if y1 == y2:  # Horizontal line
-                extended_lines.append([0, y1, self.w, y2])
-                continue
+            # Extend the line far beyond the image borders
+            dx = x2 - x1
+            dy = y2 - y1
+            if dx == 0 and dy == 0:
+                continue  # Skip degenerate line
 
-            # Compute slope and intercept
-            m = (y2 - y1) / (x2 - x1)
-            b = y1 - m * x1
+            # Extend line in both directions
+            scale = max(self.w, self.h) * 2  # extend enough to go past any edge
+            x1_ext = int(x1 - scale * dx)
+            y1_ext = int(y1 - scale * dy)
+            x2_ext = int(x2 + scale * dx)
+            y2_ext = int(y2 + scale * dy)
 
-            # Find intersections with image borders
-            x_left = 0
-            y_left = b
-            x_right = self.w
-            y_right = m * self.w + b
-            y_top = 0
-            x_top = -b / m
-            y_bottom = self.h
-            x_bottom = (self.h - b) / m
+            # Clip the extended line to image bounds
+            success, pt1, pt2 = cv2.clipLine(
+                img_rect, (x1_ext, y1_ext), (x2_ext, y2_ext)
+            )
+            if success:
+                extended_lines.append([pt1[0], pt1[1], pt2[0], pt2[1]])
 
-            # Collect valid points within image bounds
-            candidates = []
-            if 0 <= y_left <= self.h:
-                candidates.append((x_left, y_left))
-            if 0 <= y_right <= self.h:
-                candidates.append((x_right, y_right))
-            if 0 <= x_top <= self.w:
-                candidates.append((x_top, y_top))
-            if 0 <= x_bottom <= self.w:
-                candidates.append((x_bottom, y_bottom))
-
-            # Pick the two furthest points
-            if len(candidates) >= 2:
-                candidates = sorted(
-                    candidates, key=lambda p: np.hypot(p[0] - x1, p[1] - y1)
-                )
-                extended_lines.append(
-                    [
-                        int(candidates[0][0]),
-                        int(candidates[0][1]),
-                        int(candidates[1][0]),
-                        int(candidates[1][1]),
-                    ]
-                )
-            else:
-                extended_lines.append(line)  # Return original if something goes wrong
-
-        return np.array(extended_lines)
+        return np.array(extended_lines, dtype=int)
 
     def get_intersection(self, line1, line2):
         x1, y1, x2, y2 = line1

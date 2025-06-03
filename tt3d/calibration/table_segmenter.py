@@ -43,6 +43,11 @@ class TableSegmenter(L.LightningModule):
             self.loss_fn = smp.losses.DiceLoss(
                 mode=smp.losses.BINARY_MODE,
             )
+        if loss == "BCE+DICE":
+            self.bce_loss = smp.losses.SoftBCEWithLogitsLoss()
+            self.dice_loss = smp.losses.DiceLoss(
+                mode=smp.losses.BINARY_MODE,
+            )
         elif loss == "Jaccard":
             self.loss_fn = smp.losses.JaccardLoss(
                 mode=smp.losses.BINARY_MODE,
@@ -184,7 +189,12 @@ class TableSegmenter(L.LightningModule):
         # plt.show()
 
         logits_mask = self(image)
-        loss = self.loss_fn(logits_mask, mask)
+        if self.loss_name == "BCE+DICE":
+            loss = 0.5 * self.dice_loss(logits_mask, mask) + 0.5 * self.bce_loss(
+                logits_mask, mask
+            )
+        else:
+            loss = self.loss_fn(logits_mask, mask)
 
         pred_mask = self.process_logits(logits_mask)
 
@@ -243,7 +253,12 @@ class TableSegmenter(L.LightningModule):
         # print(torch.sum(mask == 1))
 
         logits_mask = self(image)
-        loss = self.loss_fn(logits_mask, mask)
+        if self.loss_name == "BCE+DICE":
+            loss = 0.5 * self.dice_loss(logits_mask, mask) + 0.5 * self.bce_loss(
+                logits_mask, mask
+            )
+        else:
+            loss = self.loss_fn(logits_mask, mask)
 
         pred_mask = self.process_logits(logits_mask)
 

@@ -32,13 +32,17 @@ from tt3d.rally.casadi_dae import rebuild
 
 if __name__ == "__main__":
     np.random.seed(0)
-    csv_dir = Path("/data/blurball_benchmark/benchmark/back_no_noise/")
-    cam_cal_path = Path("/data/blurball_benchmark/benchmark/back.yaml")
-    rvec, tvec, f = read_camera_info(cam_cal_path)
+    # Resolve the path relative to the script location
+    script_dir = Path(__file__).resolve().parent
+
+    csv_dir = script_dir / "../../data/evaluation/side_no_noise/"
+    cam_cal_path = script_dir / "../../data/evaluation/side.yaml"
+    rvec, tvec, f, h, w = read_camera_info(cam_cal_path)
+
     K = np.array(
         [
-            [f, 0, 1280 / 2],
-            [0, f, 720 / 2],
+            [f, 0, w / 2],
+            [0, f, h / 2],
             [0, 0, 1],
         ]
     )
@@ -49,10 +53,7 @@ if __name__ == "__main__":
     failures = 0
     for k, csv_path in enumerate(list_csv[:]):
         print(csv_path)
-        # if not "maybe" in csv_path:
-        #     continue
         data = pd.read_csv(csv_path)
-        # data = remove_random_rows(data, percentage=30)
         t = data["Timestamp"].to_numpy()
         traj = np.vstack(
             [
@@ -63,9 +64,6 @@ if __name__ == "__main__":
                 wrap_angles(np.degrees(data["theta"])),
             ]
         ).T
-        # print(traj)
-        # ls = data["l"].to_numpy()
-        # thetas = data["theta"].to_numpy()
 
         qs = basic_segmenter(t, traj, use_blur=True, L=200)
         if len(qs) < 2:
@@ -83,7 +81,6 @@ if __name__ == "__main__":
             # plt.show()
             failures += 1
             continue
-        # print(qs)
         q = qs[1]
         t_before = t[:q]
         t_after = t[q:]

@@ -73,7 +73,7 @@ def get_accurate_bouncing_pose(t_before, traj_before, t_after, traj_after):
     t_bounce_y = filter_real_roots(find_intersection(coeffs_y_before, coeffs_y_after))
 
     # Time range constraint
-    t_min, t_max = t_before.max() - 0.05, t_after.min() + 0.05
+    t_min, t_max = t_before.max() - 0.045, t_after.min() + 0.045
     valid_t_x = get_valid_times(t_bounce_x, t_min, t_max)
     valid_t_y = get_valid_times(t_bounce_y, t_min, t_max)
 
@@ -87,18 +87,12 @@ def get_accurate_bouncing_pose(t_before, traj_before, t_after, traj_after):
     # Handle cases with two intersections for both x and y
     if len(t_bounce_x) == 2 and len(t_bounce_y) == 2:
         # Check how parallel the polynomes are at the intersection point
-        # print(t_bounce_x)
-        # print(valid_t_x)
-        # print(t_bounce_y)
-        # print(valid_t_y)
-        der_x_bef = np.polyval(np.polyder(coeffs_x_before[::-1]), (t_min + t_max) / 2)
-        der_x_aft = np.polyval(np.polyder(coeffs_x_after[::-1]), (t_min + t_max) / 2)
+        der_x_bef = np.polyval(np.polyder(coeffs_x_before), (t_min + t_max) / 2)
+        der_x_aft = np.polyval(np.polyder(coeffs_x_after), (t_min + t_max) / 2)
         delta_x = abs(der_x_bef - der_x_aft)
-        # print(delta_x)
-        der_y_bef = np.polyval(np.polyder(coeffs_y_before[::-1]), (t_min + t_max) / 2)
-        der_y_aft = np.polyval(np.polyder(coeffs_y_after[::-1]), (t_min + t_max) / 2)
+        der_y_bef = np.polyval(np.polyder(coeffs_y_before), (t_min + t_max) / 2)
+        der_y_aft = np.polyval(np.polyder(coeffs_y_after), (t_min + t_max) / 2)
         delta_y = abs(der_y_bef - der_y_aft)
-        # print(delta_y)
 
         if delta_x > 2 * delta_y:
             # print("x")
@@ -165,13 +159,7 @@ def basic_segmenter(t, traj, deg=2, L=200, use_blur=False):
                     cost_blur = np.abs(pred_angle - traj[u : v + 1, 4])
                     cost_blur = np.abs(wrap_angles(cost_blur))
                     # Remove errors where the blur is too short
-                    cost_blur = np.sum(cost_blur[traj[u : v + 1, 3] >= 3])
-                    # print(t[u : v + 1])
-                    # print(x_der)
-                    # print(y_der)
-                    # print(pred_angle)
-                    # print(traj[u : v + 1, 4])
-                    # print()
+                    cost_blur = np.sum(cost_blur[traj[u : v + 1, 3] >= 4])
 
                 # Residuals as cost
                 res_X = np.sum(infodict_X["fvec"] ** 2)
@@ -190,7 +178,6 @@ def basic_segmenter(t, traj, deg=2, L=200, use_blur=False):
                 continue
 
         if best_u is not None:
-            # print(best_u)
             phi.append(min_cost + L)
             q.append([*q[best_u], best_u])
         else:
@@ -209,7 +196,6 @@ def classify_q(qs, t, traj):
     q_racket = []
     q_table = []
     pad = 3
-    # print(traj)
     for i in range(len(qs)):
         u_vel_before = np.mean(
             np.diff(traj[qs[i] - pad : qs[i], 0], axis=0)
@@ -227,9 +213,8 @@ def classify_q(qs, t, traj):
 
 
 if __name__ == "__main__":
-    # csv_path = Path("/home/gossard/Git/tt3d/data/demo_video/traj/satsuki_001.csv")
-    # fps = 30
-    csv_path = Path("/home/gossard/Git/tt3d/data//demo_video/traj/ma_lebrun_001.csv")
+    script_dir = Path(__file__).resolve().parent
+    csv_path = script_dir / "../../data/demo_video/traj/ma_lebrun_001.csv"
     fps = 25
 
     traj = read_traj(csv_path)

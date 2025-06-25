@@ -121,7 +121,7 @@ def read_camcal(csv_path):
     )
 
 
-def save_camcal(csv_path, rvecs, tvecs, fs):
+def save_camcal(csv_path, rvecs, tvecs, fs, errors=None):
     """
     Saves camera calibration data into a CSV file.
 
@@ -141,18 +141,31 @@ def save_camcal(csv_path, rvecs, tvecs, fs):
         "tvec_y": [],
         "tvec_z": [],
         "f": [],
+        "error": [],
     }
 
-    # Populate the data dictionary
-    for i, (rvec, tvec, f) in enumerate(zip(rvecs, tvecs, fs)):
-        data["Index"].append(i)
-        data["rvec_x"].append(rvec[0, 0])
-        data["rvec_y"].append(rvec[1, 0])
-        data["rvec_z"].append(rvec[2, 0])
-        data["tvec_x"].append(tvec[0, 0])
-        data["tvec_y"].append(tvec[1, 0])
-        data["tvec_z"].append(tvec[2, 0])
-        data["f"].append(f)
+    if errors is not None:
+        # Populate the data dictionary
+        for i, (rvec, tvec, f, er) in enumerate(zip(rvecs, tvecs, fs, errors)):
+            data["Index"].append(i)
+            data["rvec_x"].append(rvec[0])
+            data["rvec_y"].append(rvec[1])
+            data["rvec_z"].append(rvec[2])
+            data["tvec_x"].append(tvec[0])
+            data["tvec_y"].append(tvec[1])
+            data["tvec_z"].append(tvec[2])
+            data["f"].append(f)
+            data["error"].append(er)
+    else:
+        for i, (rvec, tvec, f) in enumerate(zip(rvecs, tvecs, fs)):
+            data["Index"].append(i)
+            data["rvec_x"].append(rvec[0])
+            data["rvec_y"].append(rvec[1])
+            data["rvec_z"].append(rvec[2])
+            data["tvec_x"].append(tvec[0])
+            data["tvec_y"].append(tvec[1])
+            data["tvec_z"].append(tvec[2])
+            data["f"].append(f)
 
     # Create a DataFrame and save it to a CSV file
     df = pd.DataFrame(data)

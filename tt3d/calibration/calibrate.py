@@ -94,6 +94,10 @@ def calibrate_video(input_video_path, display=False, render=False, output_path=N
             # Write the frame to the output video
             out.write(debug_img)
 
+    rvecs = np.array(rvecs).squeeze()
+    tvecs = np.array(tvecs).squeeze()
+    fs = np.array(fs).squeeze()
+
     # Release resources
     cap.release()
     if render:

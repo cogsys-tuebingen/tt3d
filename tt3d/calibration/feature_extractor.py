@@ -34,7 +34,7 @@ class FeatureExtractor:
         )
         self.mid_line = np.array([[0, 1.37, 0], [0, -1.37, 0]])
         self.all_table_3dpoints = np.vstack((self.table_3dpoints, self.mid_line))
-        self.bundler = HoughBundler(min_distance=3, min_angle=8)
+        self.bundler = HoughBundler(min_distance=6, min_angle=8)
 
     def filter_lines(self, lines, mask):
         h, w = mask.shape
@@ -271,7 +271,7 @@ class FeatureExtractor:
 
         # Estimate an initial Hough threshold based on contour area
         initial_thresh = int(0.4 * np.sqrt(cv2.contourArea(contours[0])))
-        min_line_length = int(self.h * 0.010)
+        min_line_length = int(self.h * 0.01)
         max_line_gap = int(self.h * 0.25)
 
         # Initialize variables
@@ -280,7 +280,7 @@ class FeatureExtractor:
         attempts = 0
         max_attempts = 10
 
-        while len(lines) < 6 and attempts < max_attempts:
+        while len(lines) < 8 and attempts < max_attempts:
             detected = cv2.HoughLinesP(
                 outside_edges,
                 rho=1,

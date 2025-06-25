@@ -20,11 +20,20 @@ MODEL_PATH = Path("./weights/table_segmentation.ckpt")
 
 class TableCalibrator:
     def __init__(
-        self, h=None, w=None, f_ini=1000, segmentation_model_path=MODEL_PATH
+        self,
+        h=None,
+        w=None,
+        f_ini=1000,
+        segmentation_model_path=MODEL_PATH,
+        device=None,
     ) -> None:
         self.f_ini = f_ini
+        if device is None:
+            self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            self.device = device
         self.dist = np.zeros(5)
-        self.er_thres = 10
+        self.er_thres = 2
         self.table_corners_3d = np.array(
             [
                 [-0.7625, 1.37, 0],
@@ -45,8 +54,8 @@ class TableCalibrator:
                 [0, -1.37, 0],
             ]
         )
-        print("Using: ", segmentation_model_path)
-        self.init_segmenter(segmentation_model_path)
+        # print("Using: ", segmentation_model_path)
+        self.init_segmenter(segmentation_model_path, device=self.device)
         # self.qb = QuadrilateralBounder()
         if h is not None:
             self.set_size(h, w)
@@ -62,9 +71,8 @@ class TableCalibrator:
         )
         self.fe = FeatureExtractor(self.h, self.w)
 
-    def init_segmenter(self, model_path):
+    def init_segmenter(self, model_path, device=None):
         self.table_segmenter = TableSegmenter.load_from_checkpoint(str(model_path))
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.table_segmenter.to(device)
         self.table_segmenter.eval()
 
@@ -74,7 +82,7 @@ class TableCalibrator:
 
         # Run the table segmentation model
         with torch.no_grad():
-            t_imgs = preprocess([pil_img])
+            t_imgs = preprocess([pil_img], device=self.device)
             t_masks = self.table_segmenter.infer(t_imgs)
             masks = postprocess(t_masks, sizes)
         return masks[0].astype(np.uint8)

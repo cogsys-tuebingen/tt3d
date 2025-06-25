@@ -27,7 +27,15 @@ def correct_flips(rvec):
 
 class KalmanFilterWithOutlierRejection:
     def __init__(self, n_dim=3, outlier_threshold=3.0, n_iter=10):
-        self.n_dim = n_dim  # 1 for nx1 inputs, 3 for nx3 inputs
+        """
+        Kalman filter with simple Z-score outlier rejection.
+
+        Args:
+            n_dim (int): Dimensionality of input (1 or 3).
+            outlier_threshold (float): Z-score threshold to reject outliers.
+            n_iter (int): Number of EM iterations for fitting.
+        """
+        self.n_dim = n_dim
         self.outlier_threshold = outlier_threshold
         self.n_iter = n_iter
         self.kf = KalmanFilter(
@@ -39,23 +47,47 @@ class KalmanFilterWithOutlierRejection:
 
     def fit(self, data: np.ndarray) -> np.ndarray:
         """
-        Fit the Kalman filter with EM and apply outlier rejection.
-        :param data: Input data of shape (n, 1) or (n, 3)
-        :return: Filtered data of the same shape
+        Fit the Kalman filter and reject outliers.
+
+        Args:
+            data (np.ndarray): Input data of shape (n, n_dim).
+
+        Returns:
+            np.ndarray: Filtered data of same shape.
         """
+        data = np.asarray(data).reshape((-1, self.n_dim))
+        assert (
+            data.ndim == 2 and data.shape[1] == self.n_dim
+        ), f"Expected data shape (n, {self.n_dim}), got {data.shape}"
 
-        # Initialize with NaN handling and outlier rejection
-        # filtered_data = np.copy(data)
-        # median = np.nanmedian(filtered_data, axis=0)
-        # deviation = np.nanmedian(np.abs(filtered_data - median), axis=0)
-        # z_scores = np.abs(filtered_data - median) / (deviation + 1e-6)
-        # filtered_data[z_scores > self.outlier_threshold] = np.nan
-
-        # Apply EM tuning and Kalman filtering
-        # print(filtered_data.shape)
+        # Step 1: Fit EM to all data
         self.kf = self.kf.em(data, n_iter=self.n_iter)
-        filtered_data, _ = self.kf.smooth(data)
-        return filtered_data
+        smoothed, _ = self.kf.smooth(data)
+
+        # Step 2: Compute Z-score between observed and smoothed
+        residual = data - smoothed
+        std_dev = np.std(residual, axis=0) + 1e-6  # avoid div by zero
+        z_score = np.abs(residual / std_dev)
+
+        # Step 3: Reject outliers (mark as NaN)
+        outlier_mask = np.any(z_score > self.outlier_threshold, axis=1)
+        data_clean = np.copy(data)
+        data_clean[outlier_mask] = np.nan
+
+        # Step 4: Interpolate missing values (optional)
+        for d in range(self.n_dim):
+            col = data_clean[:, d]
+            if np.any(np.isnan(col)):
+                not_nan = ~np.isnan(col)
+                col[np.isnan(col)] = np.interp(
+                    np.flatnonzero(np.isnan(col)), np.flatnonzero(not_nan), col[not_nan]
+                )
+                data_clean[:, d] = col
+
+        # Step 5: Final Kalman smoothing on cleaned data
+        self.kf = self.kf.em(data_clean, n_iter=self.n_iter)
+        filtered, _ = self.kf.smooth(data_clean)
+        return filtered
 
 
 def interquartile_mean(data):
